@@ -23,15 +23,19 @@ package org.codehaus.mojo.license.model;
  */
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.mojo.license.AbstractLicenseMojo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The {@code LicenseStore} offers {@link License} coming from different {@link
@@ -59,6 +63,8 @@ public class LicenseStore
      */
     public static final String CLASSPATH_PROTOCOL = "classpath://";
 
+    public static final String DEPENDENCY_PROTOCOL = "dependency:";
+
     /**
      * list of available license repositories.
      */
@@ -69,7 +75,7 @@ public class LicenseStore
      */
     protected boolean init;
 
-    public static LicenseStore createLicenseStore( String... extraResolver )
+    public static LicenseStore createLicenseStore( AbstractLicenseMojo mojo, String... extraResolver )
         throws MojoExecutionException
     {
         LicenseStore store;
@@ -84,7 +90,7 @@ public class LicenseStore
                     if ( StringUtils.isNotEmpty( s ) )
                     {
                         LOG.info( "adding extra resolver {}", s );
-                        store.addRepository( s );
+                        store.addRepository( s, mojo );
                     }
                 }
             }
@@ -181,7 +187,7 @@ public class LicenseStore
         return result;
     }
 
-    public void addRepository( String extraResolver )
+    public void addRepository( String extraResolver, AbstractLicenseMojo mojo )
         throws IOException
     {
 
@@ -195,6 +201,30 @@ public class LicenseStore
             LOG.info( "Using classpath extraresolver: {}", extraResolver );
             URL baseURL = getClass().getClassLoader().getResource( extraResolver );
             addRepository( baseURL );
+        }
+        else if ( extraResolver.startsWith( DEPENDENCY_PROTOCOL ) )
+        {
+            extraResolver = extraResolver.substring( DEPENDENCY_PROTOCOL.length() );
+            LOG.info( "Using dependency extraresolver: {}", extraResolver );
+            Set<Artifact> cpEntries =  mojo.getProject().getArtifacts();
+            LOG.info( "CP to scan:{}", cpEntries );
+            String[] groupAndArtifact = extraResolver.split( ":" );
+            String groupId = groupAndArtifact[0];
+            LOG.info( "groupId:{}", groupId );
+            String fileInside = extraResolver.split( "!" )[1];
+            String artifactId = groupAndArtifact[1].replace( fileInside, "" ).replace( "!", "" );
+            LOG.info( "artifactId:{}", artifactId );
+            LOG.info( "file in dependency:{}", fileInside );
+            for ( Artifact dep : cpEntries )
+            {
+              if ( dep.getGroupId().equals( groupId ) && dep.getArtifactId().equals( artifactId ) )
+              {
+                URLClassLoader cl = new URLClassLoader( new URL[] {dep.getFile().toURL()} );
+                URL fileInJar = cl.getResource( fileInside );
+                LOG.info( "found file:{}", fileInJar );
+                addRepository( fileInJar );
+              }
+            }
         }
         else
         {

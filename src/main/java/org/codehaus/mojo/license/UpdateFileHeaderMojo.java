@@ -24,6 +24,7 @@ package org.codehaus.mojo.license;
 
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * The goal to update (or add) the header on project source files.
@@ -37,7 +38,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @author tchemit dev@tchemit.fr
  * @since 1.0
  */
-@Mojo( name = "update-file-header", threadSafe = true )
+@Mojo( name = "update-file-header", threadSafe = true , requiresDependencyResolution = ResolutionScope.COMPILE )
 public class UpdateFileHeaderMojo extends AbstractFileHeaderMojo
 {
 

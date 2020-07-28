@@ -186,7 +186,7 @@ public abstract class AbstractLicenseNameMojo
     {
 
         // init licenses store
-        licenseStore = LicenseStore.createLicenseStore( licenseResolver );
+        licenseStore = LicenseStore.createLicenseStore( this, licenseResolver );
 
         // check licenseName exists
         license = getLicense( licenseName, true );

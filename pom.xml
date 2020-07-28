@@ -104,10 +104,16 @@
     <url>https://travis-ci.org/mojohaus/license-maven-plugin</url>
   </ciManagement>
   <distributionManagement>
-    <site>
-      <id>github</id>
-      <url>scm:git:git@github.com:mojohaus/license-maven-plugin.git</url>
-    </site>
+    <repository>
+      <id>central</id>
+      <name>testifi-releases</name>
+      <url>${artefactoryBaseUrl}/all</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>testifi-snapshots</name>
+      <url>${artefactoryBaseUrl}/all</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <properties>
@@ -537,141 +543,141 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>run-its</id>
-      <activation>
-        <property>
-          <name>skipITs</name>
-          <value>!true</value>
-        </property>
-      </activation>
-      <build>
-        <defaultGoal>verify</defaultGoal>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.gmaven</groupId>
-            <artifactId>groovy-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>LittleProxyStart</id>
-                <goals>
-                  <goal>execute</goal>
-                </goals>
-                <phase>pre-integration-test</phase>
-                <configuration>
-                  <source>${project.basedir}/src/build/scripts/LittleProxyStart.groovy</source>
-                </configuration>
-              </execution>
-              <execution>
-                <id>LittleProxyStop</id>
-                <goals>
-                  <goal>execute</goal>
-                </goals>
-                <phase>post-integration-test</phase>
-                <configuration>
-                  <source>System.setProperty('LittleProxy.stop', 'true')</source>
-                </configuration>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.littleshoot</groupId>
-                <artifactId>littleproxy</artifactId>
-                <version>1.1.2</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-          <plugin>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <configuration>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-            </configuration>
-            <executions>
-              <execution>
-                <id>all-integration-test</id>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <skipInvocation />
-                  <extraArtifacts>
-                    <extraArtifact>${project.groupId}:${project.artifactId}:${project.version}:license.properties:test-third-party</extraArtifact>
-                  </extraArtifacts>
-                  <pomExcludes>
-                    <pomExclude>MLICENSE-4/pom.xml</pomExclude>
-                    <pomExclude>download-licenses-proxy/pom.xml</pomExclude>
-                  </pomExcludes>
-                </configuration>
-              </execution>
-              <!-- as this it is run in offline, then execute it after the previous its... -->
-              <execution>
-                <id>integration-test-offline</id>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <pomIncludes>
-                    <pomInclude>MLICENSE-4/pom.xml</pomInclude>
-                  </pomIncludes>
-                  <cloneProjectsTo>${project.build.directory}/it-offline</cloneProjectsTo>
-                </configuration>
-              </execution>
-              <execution>
-                <id>integration-test-proxy</id>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <settingsFile>src/it/settings-proxy.xml</settingsFile>
-                  <pomIncludes>
-                    <pomInclude>download-licenses-proxy/pom.xml</pomInclude>
-                  </pomIncludes>
-                  <cloneProjectsTo>${project.build.directory}/it-proxy</cloneProjectsTo>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+<!--     <profile> -->
+<!--       <id>run-its</id> -->
+<!--       <activation> -->
+<!--         <property> -->
+<!--           <name>skipITs</name> -->
+<!--           <value>!true</value> -->
+<!--         </property> -->
+<!--       </activation> -->
+<!--       <build> -->
+<!--         <defaultGoal>verify</defaultGoal> -->
+<!--         <plugins> -->
+<!--           <plugin> -->
+<!--             <groupId>org.codehaus.gmaven</groupId> -->
+<!--             <artifactId>groovy-maven-plugin</artifactId> -->
+<!--             <executions> -->
+<!--               <execution> -->
+<!--                 <id>LittleProxyStart</id> -->
+<!--                 <goals> -->
+<!--                   <goal>execute</goal> -->
+<!--                 </goals> -->
+<!--                 <phase>pre-integration-test</phase> -->
+<!--                 <configuration> -->
+<!--                   <source>${project.basedir}/src/build/scripts/LittleProxyStart.groovy</source> -->
+<!--                 </configuration> -->
+<!--               </execution> -->
+<!--               <execution> -->
+<!--                 <id>LittleProxyStop</id> -->
+<!--                 <goals> -->
+<!--                   <goal>execute</goal> -->
+<!--                 </goals> -->
+<!--                 <phase>post-integration-test</phase> -->
+<!--                 <configuration> -->
+<!--                   <source>System.setProperty('LittleProxy.stop', 'true')</source> -->
+<!--                 </configuration> -->
+<!--               </execution> -->
+<!--             </executions> -->
+<!--             <dependencies> -->
+<!--               <dependency> -->
+<!--                 <groupId>org.littleshoot</groupId> -->
+<!--                 <artifactId>littleproxy</artifactId> -->
+<!--                 <version>1.1.2</version> -->
+<!--               </dependency> -->
+<!--             </dependencies> -->
+<!--           </plugin> -->
+<!--           <plugin> -->
+<!--             <artifactId>maven-invoker-plugin</artifactId> -->
+<!--             <configuration> -->
+<!--               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo> -->
+<!--               <settingsFile>src/it/settings.xml</settingsFile> -->
+<!--               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath> -->
+<!--             </configuration> -->
+<!--             <executions> -->
+<!--               <execution> -->
+<!--                 <id>all-integration-test</id> -->
+<!--                 <goals> -->
+<!--                   <goal>install</goal> -->
+<!--                   <goal>run</goal> -->
+<!--                 </goals> -->
+<!--                 <configuration> -->
+<!--                   <skipInvocation /> -->
+<!--                   <extraArtifacts> -->
+<!--                     <extraArtifact>${project.groupId}:${project.artifactId}:${project.version}:license.properties:test-third-party</extraArtifact> -->
+<!--                   </extraArtifacts> -->
+<!--                   <pomExcludes> -->
+<!--                     <pomExclude>MLICENSE-4/pom.xml</pomExclude> -->
+<!--                     <pomExclude>download-licenses-proxy/pom.xml</pomExclude> -->
+<!--                   </pomExcludes> -->
+<!--                 </configuration> -->
+<!--               </execution> -->
+<!--               as this it is run in offline, then execute it after the previous its... -->
+<!--               <execution> -->
+<!--                 <id>integration-test-offline</id> -->
+<!--                 <goals> -->
+<!--                   <goal>run</goal> -->
+<!--                 </goals> -->
+<!--                 <configuration> -->
+<!--                   <pomIncludes> -->
+<!--                     <pomInclude>MLICENSE-4/pom.xml</pomInclude> -->
+<!--                   </pomIncludes> -->
+<!--                   <cloneProjectsTo>${project.build.directory}/it-offline</cloneProjectsTo> -->
+<!--                 </configuration> -->
+<!--               </execution> -->
+<!--               <execution> -->
+<!--                 <id>integration-test-proxy</id> -->
+<!--                 <goals> -->
+<!--                   <goal>run</goal> -->
+<!--                 </goals> -->
+<!--                 <configuration> -->
+<!--                   <settingsFile>src/it/settings-proxy.xml</settingsFile> -->
+<!--                   <pomIncludes> -->
+<!--                     <pomInclude>download-licenses-proxy/pom.xml</pomInclude> -->
+<!--                   </pomIncludes> -->
+<!--                   <cloneProjectsTo>${project.build.directory}/it-proxy</cloneProjectsTo> -->
+<!--                 </configuration> -->
+<!--               </execution> -->
+<!--             </executions> -->
+<!--           </plugin> -->
+<!--         </plugins> -->
+<!--       </build> -->
+<!--     </profile> -->
 
-    <profile>
-      <id>run-one-it</id>
-      <build>
-        <defaultGoal>verify</defaultGoal>
-        <plugins>
-          <plugin>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <configuration>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-            </configuration>
-            <executions>
-              <execution>
-                <id>one-integration-test</id>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <streamLogs>true</streamLogs>
-                  <pomIncludes>
-                    <pomInclude>${itName}/pom.xml</pomInclude>
-                  </pomIncludes>
-                </configuration>
-              </execution>
-            </executions>
-            <dependencies>
+<!--     <profile> -->
+<!--       <id>run-one-it</id> -->
+<!--       <build> -->
+<!--         <defaultGoal>verify</defaultGoal> -->
+<!--         <plugins> -->
+<!--           <plugin> -->
+<!--             <artifactId>maven-invoker-plugin</artifactId> -->
+<!--             <configuration> -->
+<!--               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo> -->
+<!--               <settingsFile>src/it/settings.xml</settingsFile> -->
+<!--               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath> -->
+<!--             </configuration> -->
+<!--             <executions> -->
+<!--               <execution> -->
+<!--                 <id>one-integration-test</id> -->
+<!--                 <goals> -->
+<!--                   <goal>install</goal> -->
+<!--                   <goal>run</goal> -->
+<!--                 </goals> -->
+<!--                 <configuration> -->
+<!--                   <streamLogs>true</streamLogs> -->
+<!--                   <pomIncludes> -->
+<!--                     <pomInclude>${itName}/pom.xml</pomInclude> -->
+<!--                   </pomIncludes> -->
+<!--                 </configuration> -->
+<!--               </execution> -->
+<!--             </executions> -->
+<!--             <dependencies> -->
 
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+<!--             </dependencies> -->
+<!--           </plugin> -->
+<!--         </plugins> -->
+<!--       </build> -->
+<!--     </profile> -->
 
     <profile>
       <id>mojo-release</id>

@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.mojo.license.model.License;
 import org.codehaus.mojo.license.model.LicenseStore;
 import org.slf4j.Logger;
@@ -42,7 +43,8 @@ import java.util.List;
  * @author tchemit dev@tchemit.fr
  * @since 1.0
  */
-@Mojo( name = "license-list", requiresProject = false, requiresDirectInvocation = true )
+@Mojo( name = "license-list", requiresProject = false, requiresDirectInvocation = true ,
+    requiresDependencyResolution = ResolutionScope.COMPILE )
 public class LicenseListMojo
     extends AbstractLicenseMojo
 {
@@ -103,7 +105,7 @@ public class LicenseListMojo
     {
 
         // obtain licenses store
-        licenseStore = LicenseStore.createLicenseStore( extraResolver );
+        licenseStore = LicenseStore.createLicenseStore( this, extraResolver );
     }
 
     /**

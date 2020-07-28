@@ -25,6 +25,7 @@ package org.codehaus.mojo.license;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.mojo.license.model.License;
 import org.codehaus.mojo.license.utils.FileUtil;
 import org.slf4j.Logger;
@@ -43,7 +44,8 @@ import java.io.File;
  * @author tchemit dev@tchemit.fr
  * @since 1.0
  */
-@Mojo( name = "update-project-license", defaultPhase = LifecyclePhase.GENERATE_RESOURCES )
+@Mojo( name = "update-project-license", defaultPhase = LifecyclePhase.GENERATE_RESOURCES ,
+    requiresDependencyResolution = ResolutionScope.COMPILE )
 public class UpdateProjectLicenseMojo
     extends AbstractLicenseNameMojo
 {
